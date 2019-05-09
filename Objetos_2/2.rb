@@ -2,16 +2,20 @@ require 'date'
 
 class Curso
   attr_reader :name, :dates
+  attr_writer :limit
   @limit = Date.new(2018,1,1)
+
   def initialize(name,*dates)
     @name = name
     @dates = dates.map {|e| Date.parse(e)}
   end
+
   def self.create_from_file(file)
     data = open(file).readlines
     cursos = data.map{ |curso| curso.split(", ") }
     return cursos.map{ |curso| Curso.new(*curso)}
   end
+
   def self.start_before(cursos,date = Date.today.to_s)
     external_date = Date.parse(date)
     if external_date >= @limit
@@ -20,6 +24,7 @@ class Curso
     cursos_filtrados = cursos.select {|e| e.dates[0]<external_date}
     return cursos_filtrados.map { |e| e.name }
   end
+
   def self.end_after(cursos,date = Date.today.to_s)
     external_date = Date.parse(date)
     if external_date >= @limit
@@ -27,7 +32,6 @@ class Curso
     end
     return cursos.select {|e| external_date<e.dates[1] }.map { |e| e.name }
   end
-
 
 end
 
